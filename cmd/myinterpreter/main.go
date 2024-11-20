@@ -6,8 +6,21 @@ import (
 	"strings"
 )
 
-func addToken(tokenType string, text string) {
-	fmt.Printf("%s %s null\n", tokenType, text)
+func addToken(tokenType string, text string, value ...string) {
+	lexVal := "null"
+	if len(value) > 0 {
+		lexVal = value[0]
+	}
+
+	fmt.Printf("%s %s %s\n", tokenType, text, lexVal)
+}
+
+func indexAt(s, sep string, n int) int {
+    idx := strings.Index(s[n:], sep)
+    if idx > -1 {
+        idx += n
+    }
+    return idx
 }
 
 func main() {
@@ -45,44 +58,44 @@ func main() {
 			case '}':
 				addToken("RIGHT_BRACE", text)
 			case ',':
-				addToken("COMMA", ",")
+				addToken("COMMA", text)
 			case '.':
-				addToken("DOT", ".")
+				addToken("DOT", text)
 			case '+':
-				addToken("PLUS", "+")
+				addToken("PLUS", text)
 			case '-':
-				addToken("MINUS", "-")
+				addToken("MINUS", text)
 			case '*':
-				addToken("STAR", "*")
+				addToken("STAR", text)
 			case ';':
-				addToken("SEMICOLON", ";")
+				addToken("SEMICOLON", text)
 			case '=':
 				if i+1 < len(fileContents) && fileContents[i+1] == '=' {
 					addToken("EQUAL_EQUAL", "==")
 					i += 1
 				} else {
-					addToken("EQUAL", "=")
+					addToken("EQUAL", text)
 				}
 			case '!':
 				if i+1 < len(fileContents) && fileContents[i+1] == '=' {
 					addToken("BANG_EQUAL", "!=")
 					i += 1
 				} else {
-					addToken("BANG", "!")
+					addToken("BANG", text)
 				}
 			case '<':
 				if i+1 < len(fileContents) && fileContents[i+1] == '=' {
 					addToken("LESS_EQUAL", "<=")
 					i += 1
 				} else {
-					addToken("LESS", "<")
+					addToken("LESS", text)
 				}
 			case '>':
 				if i+1 < len(fileContents) && fileContents[i+1] == '=' {
 					addToken("GREATER_EQUAL", ">=")
 					i += 1
 				} else {
-					addToken("GREATER", ">")
+					addToken("GREATER", text)
 				}
 			case '/':
 				if i+1 < len(fileContents) && fileContents[i+1] == '/' {
@@ -94,12 +107,22 @@ func main() {
 						i += len(fileContents)
 					}
 				} else {
-					addToken("SLASH", "/")
+					addToken("SLASH", text)
 				}
 			case ' ', '\t', '\r':
 				//Ignore whitespace
 			case '\n':
 				lineNumber += 1
+			case '"':
+				endingQuoteIndex := indexAt(string(fileContents), "\"", i + 1)
+				if endingQuoteIndex >= 0 {
+					addToken("STRING", string(fileContents[i:endingQuoteIndex+1]), string(fileContents[i+1:endingQuoteIndex]))
+					i = endingQuoteIndex
+				} else {
+					fmt.Fprintf(os.Stderr, "[line %d] Error: Unterminated string.\n", lineNumber)
+					has_errors = true
+					i += len(fileContents)
+				}
 			default:
 				fmt.Fprintf(os.Stderr, "[line %d] Error: Unexpected character: %c\n", lineNumber, fileContents[i])
 				has_errors = true
