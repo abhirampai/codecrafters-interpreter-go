@@ -31,6 +31,7 @@ func main() {
 	}
 
 	if len(fileContents) > 0 {
+		pass := false
 		for i := 0; i < len(fileContents); i++ {
 			text := string(fileContents[i])
 			switch fileContents[i] {
@@ -82,9 +83,20 @@ func main() {
 				} else {
 					addToken("GREATER", ">")
 				}
+			case '/':
+				if i+1 < len(fileContents) && fileContents[i+1] == '/' {
+					pass = true
+					break
+				} else {
+					addToken("SLASH", "/")
+				}
 			default:
 				fmt.Fprintf(os.Stderr, "[line 1] Error: Unexpected character: %c\n", fileContents[i])
 				has_errors = true
+			}
+			
+			if pass {
+				break
 			}
 		}
 		fmt.Println("EOF  null")
