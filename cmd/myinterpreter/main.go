@@ -68,6 +68,20 @@ func main() {
 				} else {
 					addToken("BANG", "!")
 				}
+			case '<':
+				if i+1 < len(fileContents) && fileContents[i+1] == '=' {
+					addToken("LESS_EQUAL", "<=")
+					i += 1
+				} else {
+					addToken("LESS", "<")
+				}
+			case '>':
+				if i+1 < len(fileContents) && fileContents[i+1] == '=' {
+					addToken("GREATER_EQUAL", ">=")
+					i += 1
+				} else {
+					addToken("GREATER", ">")
+				}
 			default:
 				fmt.Fprintf(os.Stderr, "[line 1] Error: Unexpected character: %c\n", fileContents[i])
 				has_errors = true
