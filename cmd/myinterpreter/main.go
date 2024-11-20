@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"strconv"
 )
 
 func addToken(tokenType string, text string, value ...string) {
@@ -122,6 +123,27 @@ func main() {
 					fmt.Fprintf(os.Stderr, "[line %d] Error: Unterminated string.\n", lineNumber)
 					has_errors = true
 					i += len(fileContents)
+				}
+			case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+				isFloat := false
+				number := string(fileContents[i])
+				for i+1 < len(fileContents) && ((fileContents[i+1] >= '0' && fileContents[i+1] <= '9') || fileContents[i+1] == '.') {
+					if fileContents[i+1] == '.' {
+						isFloat = true
+					}
+					number += string(fileContents[i+1])
+					i += 1
+				}
+				if isFloat {
+					result, _ := strconv.ParseFloat(number, 64)
+					resultString := strconv.FormatFloat(result, 'f', -1, 64)
+					if strings.Index(resultString, ".") == -1 {
+						resultString += ".0"
+					}
+
+					addToken("NUMBER", number, resultString)
+				} else {
+					addToken("NUMBER", number, number + ".0")
 				}
 			default:
 				fmt.Fprintf(os.Stderr, "[line %d] Error: Unexpected character: %c\n", lineNumber, fileContents[i])
