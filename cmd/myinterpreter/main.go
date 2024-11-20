@@ -42,8 +42,46 @@ func identifier(s string) int {
 		current_index++
 	}
 	
-	addToken("IDENTIFIER", s[:current_index])
+	text := s[:current_index]
 	
+	if text == "true" {
+		addToken("TRUE", text)
+	}  else if text == "false" {
+		addToken("FALSE", text)
+	} else if text == "nil" {
+		addToken("NIL", text)
+	} else if text == "and" { 
+		addToken("AND", text)
+	} else if text == "or" {
+		addToken("OR", text)
+	} else if text == "not" {
+		addToken("NOT", text)
+	} else if text == "for" {
+		addToken("FOR", text)
+	} else if text == "if" {
+		addToken("IF", text)
+	} else if text == "else" {
+		addToken("ELSE", text)
+	} else if text == "while" {
+		addToken("WHILE", text)
+	} else if text == "var" {
+		addToken("VAR", text)
+	} else if text == "this" {
+		addToken("THIS", text)
+	} else if text == "super" {
+		addToken("SUPER", text)
+	} else if text == "return" {
+		addToken("RETURN", text)
+	} else if text == "print" {
+		addToken("PRINT", text)
+	} else if text == "fun" {
+		addToken("FUN", text)
+	} else if text == "class" {
+		addToken("CLASS", text)
+	} else {
+		addToken("IDENTIFIER", s[:current_index])
+	}
+
 	return current_index
 }
 
