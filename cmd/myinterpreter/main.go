@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 func addToken(tokenType string, text string) {
@@ -31,7 +32,7 @@ func main() {
 	}
 
 	if len(fileContents) > 0 {
-		pass := false
+		lineNumber := 1
 		for i := 0; i < len(fileContents); i++ {
 			text := string(fileContents[i])
 			switch fileContents[i] {
@@ -85,19 +86,23 @@ func main() {
 				}
 			case '/':
 				if i+1 < len(fileContents) && fileContents[i+1] == '/' {
-					pass = true
+					newLineIndex := strings.Index(string(fileContents[i+1:]), "\n")
+					if (newLineIndex >= 0) {
+						i += strings.Index(string(fileContents[i:]), "\n")
+						lineNumber += 1
+					} else {
+						i += len(fileContents)
+					}
 				} else {
 					addToken("SLASH", "/")
 				}
-			case ' ', '\t', '\n', '\r':
+			case ' ', '\t', '\r':
 				//Ignore whitespace
+			case '\n':
+				lineNumber += 1
 			default:
-				fmt.Fprintf(os.Stderr, "[line 1] Error: Unexpected character: %c\n", fileContents[i])
+				fmt.Fprintf(os.Stderr, "[line %d] Error: Unexpected character: %c\n", lineNumber, fileContents[i])
 				has_errors = true
-			}
-			
-			if pass {
-				break
 			}
 		}
 		fmt.Println("EOF  null")
