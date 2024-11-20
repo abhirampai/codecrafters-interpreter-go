@@ -5,6 +5,10 @@ import (
 	"os"
 )
 
+func addToken(tokenType string, text string) {
+	fmt.Printf("%s %s null\n", tokenType, text)
+}
+
 func main() {
 	if len(os.Args) < 3 {
 		fmt.Fprintln(os.Stderr, "Usage: ./your_program.sh tokenize <filename>")
@@ -26,7 +30,15 @@ func main() {
 	}
 	
 	if len(fileContents) > 0 {
-		panic("Scanner not implemented")
+		for i := 0; i < len(fileContents); i++ {
+			switch fileContents[i] {
+				case '(':
+					addToken("LEFT_PAREN", "(");
+				case ')':
+					addToken("RIGHT_PAREN", ")");
+			}
+		}
+		fmt.Println("EOF  null")
 	} else {
 		fmt.Println("EOF  null") // Placeholder, remove this line when implementing the scanner
 	}
