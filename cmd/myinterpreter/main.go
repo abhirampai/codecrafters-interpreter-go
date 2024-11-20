@@ -24,6 +24,29 @@ func indexAt(s, sep string, n int) int {
     return idx
 }
 
+func isAlpha(c byte) bool {
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_')
+}
+
+func isDigit(c byte) bool {
+	return c >= '0' && c <= '9'
+}
+
+func isAlphaNumeric(c byte) bool {
+	return isAlpha(c) || isDigit(c)
+}
+
+func identifier(s string) int {
+	current_index := 0
+	for current_index < len(s) && isAlphaNumeric(s[current_index]) {
+		current_index++
+	}
+	
+	addToken("IDENTIFIER", s[:current_index])
+	
+	return current_index
+}
+
 func main() {
 	if len(os.Args) < 3 {
 		fmt.Fprintln(os.Stderr, "Usage: ./your_program.sh tokenize <filename>")
@@ -146,6 +169,10 @@ func main() {
 					addToken("NUMBER", number, number + ".0")
 				}
 			default:
+				if isAlpha(fileContents[i]) {
+					i += identifier(string(fileContents[i:])) - 1
+					break
+				}
 				fmt.Fprintf(os.Stderr, "[line %d] Error: Unexpected character: %c\n", lineNumber, fileContents[i])
 				has_errors = true
 			}
