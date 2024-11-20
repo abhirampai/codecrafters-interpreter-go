@@ -36,6 +36,10 @@ func main() {
 					addToken("LEFT_PAREN", "(");
 				case ')':
 					addToken("RIGHT_PAREN", ")");
+				case '{':
+					addToken("LEFT_BRACE", "{");
+				case '}':
+					addToken("RIGHT_BRACE", "}");
 			}
 		}
 		fmt.Println("EOF  null")
