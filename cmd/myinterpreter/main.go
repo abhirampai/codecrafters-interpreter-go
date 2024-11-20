@@ -24,6 +24,7 @@ func main() {
 
 	filename := os.Args[2]
 	fileContents, err := os.ReadFile(filename)
+	has_errors := false
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error reading file: %v\n", err)
 		os.Exit(1)
@@ -54,11 +55,16 @@ func main() {
 				case ';':
 					addToken("SEMICOLON", ";");
 				default:
-					fmt.Printf("%c Unexpected character.c\n", fileContents[i])
+					fmt.Fprintf(os.Stderr, "[line 1] Error: Unexpected character: %c\n", fileContents[i]);
+					has_errors = true;
 			}
 		}
 		fmt.Println("EOF  null")
 	} else {
 		fmt.Println("EOF  null") // Placeholder, remove this line when implementing the scanner
+	}
+	
+	if has_errors {
+		os.Exit(65)
 	}
 }
