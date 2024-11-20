@@ -61,6 +61,13 @@ func main() {
 				} else {
 					addToken("EQUAL", "=")
 				}
+			case '!':
+				if i+1 < len(fileContents) && fileContents[i+1] == '=' {
+					addToken("BANG_EQUAL", "!=")
+					i += 1
+				} else {
+					addToken("BANG", "!")
+				}
 			default:
 				fmt.Fprintf(os.Stderr, "[line 1] Error: Unexpected character: %c\n", fileContents[i])
 				has_errors = true
